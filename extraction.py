@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 from openai import OpenAI
+import os
+from pypdf import PdfReader
 
 client = OpenAI()
 
@@ -12,13 +14,59 @@ class ResearchPaperExtraction(BaseModel):
     experiments: list[str]
     impact: str
 
-completion = client.beta.chat.completions.parse(
-    model="gpt-4o-mini",
-    messages=[
-        {"role": "system", "content": "You are an expert at structured data extraction. You will be given unstructured text from a research paper and should convert it into the given structure."},
-        {"role": "user", "content": "..."}
-    ],
-    response_format=ResearchPaperExtraction,
+
+def clean_text(context: str):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are to clean the given text below do not remove the content and only format it properly in markdown format."
+            },
+            {
+                "role": "user",
+                "content": f"{context}"
+            }
+        ],
+        temperature=0
+    )
+
+    return response.choices[0].message.content
+
+
+def research_paper_extraction(
+    pdf_path: str
+) -> str:
+    pdf_read = PdfReader(pdf_path)
+    context = ""
+
+    for x in pdf_read.pages:
+        context += x.extract_text()
+
+    print(context)
+
+    # cleaned_context = clean_text(
+    #     context=context
+    # )
+
+    # print(cleaned_context)
+
+    completion = client.beta.chat.completions.parse(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are an expert at structured data extraction. You will be given unstructured text from a research paper and should convert it into the given structure."},
+            {"role": "user", "content": f"CONTENT:\n{context}"}
+        ],
+        response_format=ResearchPaperExtraction,
+    )
+
+    research_paper = completion.choices[0].message.parsed
+
+    return research_paper
+
+
+obj_ = research_paper_extraction(
+    "/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/CVPR/R007.pdf"
 )
 
-research_paper = completion.choices[0].message.parsed
+print(obj_.impact)
