@@ -16,4 +16,6 @@ ENV PATH="/app/kdhs_env/bin:$PATH"
 
 RUN uv pip install  pypdf openai pypdf asyncio uvicorn fastapi
 
-CMD ["python", "main.py"]
+EXPOSE 8080
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
