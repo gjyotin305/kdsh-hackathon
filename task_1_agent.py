@@ -207,7 +207,7 @@ async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
       - A short textual review
       - A final label: Publishable or Not Publishable
     """
-    response = await client.chat.completions.acreate(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini", 
         messages=[
             {"role": "system", "content": system_prompt},
@@ -278,7 +278,7 @@ Clarity: {avg_scores['Clarity']:.2f}
 Relevance: {avg_scores['Relevance']:.2f}
 """
 
-    response = await client.chat.completions.acreate(
+    response = await client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": aggregator_prompt},
@@ -350,4 +350,3 @@ async def main():
 ###############################################################################
 if __name__ == "__main__":
     asyncio.run(main())
-
