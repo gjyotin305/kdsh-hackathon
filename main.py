@@ -12,6 +12,13 @@ class APIRequest(BaseModel):
 
 @app.post("/api/task2")
 def recommender(body: APIRequest):
+    """
+    curl --location 'http://localhost:8080/api/task1' \
+        --header 'Content-Type: application/json' \
+        --data '{
+            "pdf_path": "<PDF_PATH>"
+    }'
+    """
     logger.info(f"TASK 2 | {body.pdf_path}")
     
     object = router_conference(
@@ -26,9 +33,16 @@ def recommender(body: APIRequest):
 
 @app.post("/api/task1")
 def classifier(body: APIRequest):
+    """
+    curl --location 'http://localhost:8080/api/task1' \
+    --header 'Content-Type: application/json' \
+    --data '{
+        "pdf_path": "yes"
+    }'
+    """
     logger.info(f"TASK 1 | {body.pdf_path}")
     return {
-        "message": "############@)))############"
+        "message": ""
     }
 
 
