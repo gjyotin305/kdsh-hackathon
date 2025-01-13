@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from openai import OpenAI
 import os
+from constants import MODEL_NAME
 from pypdf import PdfReader
 
 client = OpenAI()
@@ -17,7 +18,7 @@ class ResearchPaperExtraction(BaseModel):
 
 def clean_text(context: str):
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=f"{MODEL_NAME}",
         messages=[
             {
                 "role": "system",
@@ -46,7 +47,7 @@ def research_paper_extraction(
     print(context)
 
     completion = client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
+        model=f"{MODEL_NAME}",
         messages=[
             {"role": "system", "content": "You are an expert at structured data extraction. You will be given unstructured text from a research paper and should convert it into the given structure."},
             {"role": "user", "content": f"CONTENT:\n{context}"}

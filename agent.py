@@ -1,8 +1,10 @@
 from openai import OpenAI
 from extraction import research_paper_extraction
 from pydantic import BaseModel
-from constants import RECOMMENDER_PROMPT
-
+from constants import (
+    RECOMMENDER_PROMPT,
+    MODEL_NAME
+)
 client = OpenAI()
 
 class ConferenceRecommender(BaseModel):
@@ -18,7 +20,7 @@ def router_conference(
     )
 
     completion = client.beta.chat.completions.parse(
-        model="gpt-4o-mini",
+        model=f"{MODEL_NAME}",
         messages=[
             {
                 "role": "system", 

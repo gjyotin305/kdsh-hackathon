@@ -21,3 +21,5 @@ KDD is a leading conference in data mining and knowledge discovery, covering big
 
 Based on the abstract provided, recommend the conference that best matches the scope and focus of the conference.
 """
+
+MODEL_NAME="gpt-4o-mini"
