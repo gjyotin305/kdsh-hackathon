@@ -19,7 +19,7 @@ TMLR is a journal-conference hybrid publishing cutting-edge research in machine 
 KDD (Knowledge Discovery and Data Mining):
 KDD is a leading conference in data mining and knowledge discovery, covering big data, data science, machine learning applications, and data-driven insights. It is an excellent choice for papers on innovative methods or applications in data mining.
 
-Based on the abstract provided, recommend the conference that best matches the scope and focus of the conference.
+Based on the abstract provided, recommend the conference that best matches the scope and focus of the conference and give the rationale for the same.
 """
 
 MODEL_NAME="gpt-4o-mini"

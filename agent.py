@@ -9,6 +9,7 @@ client = OpenAI()
 
 class ConferenceRecommender(BaseModel):
     conference_title: str
+    rationale: str
 
 
 def router_conference( 
