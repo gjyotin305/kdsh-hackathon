@@ -40,6 +40,7 @@ def router_conference(
 
 if __name__ == "__main__":
     conf_title = router_conference(
-        pdf_path="/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/CVPR/R006.pdf"
+        pdf_path="/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/TMLR/R014.pdf"
     )
     print(conf_title.conference_title)
+    print(conf_title.rationale)
