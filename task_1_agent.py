@@ -208,7 +208,7 @@ async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
       - A final label: Publishable or Not Publishable
     """
     response = await client.chat.completions.acreate(
-        model="gpt-4", 
+        model="gpt-4o-mini", 
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
