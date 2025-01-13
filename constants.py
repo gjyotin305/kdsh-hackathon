@@ -19,7 +19,7 @@ TMLR is a journal-conference hybrid publishing cutting-edge research in machine 
 KDD (Knowledge Discovery and Data Mining):
 KDD is a leading conference in data mining and knowledge discovery, covering big data, data science, machine learning applications, and data-driven insights. It is an excellent choice for papers on innovative methods or applications in data mining.
 
-Based on the abstract provided, recommend the conference that best matches the scope and focus of the conference and give the rationale for the same.
+Analyze the abstract provided and recommend the conference that best aligns with its scope, focus, and target audience. Provide a clear rationale for your recommendation, considering the key themes, objectives, and priorities of the abstract. If two or more conferences appear equally suitable, resolve the conflict by selecting the one that is most likely to maximize the impact and relevance of the submission. Additionally, assign a confidence score (on a scale of 1 to 100) to reflect how well the recommended conference matches the abstract's content and goals.
 
 """
 # confenve oder from website
