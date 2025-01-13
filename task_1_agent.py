@@ -70,6 +70,10 @@ reviewer_prompts = [
     """
 ]
 
+###############################################################################
+# context
+###############################################################################
+context= ""
 
 ###############################################################################
     # 2. User prompt: Define the task and provide an example for the reviewers
@@ -87,39 +91,105 @@ provide a step-by-step explanation of your decision-making process, considering
 all four criteria, and label the paper accordingly.
 
 ---
-#### **Examples**
-**Example 1:**  
-**Title:** "A Novel Algorithm for Optimizing Neural Networks"  
-**Abstract:** This paper introduces a groundbreaking optimization method that improves both accuracy and efficiency in neural network training.  
-**Methodology:** We use stochastic gradient descent with adaptive momentum and test on the CIFAR-10 and ImageNet datasets.  
-**Conclusion:** The proposed method achieves 15% improvement in training time with comparable accuracy.  
-**Analysis:**  
-- **Originality:** The paper introduces a new optimization method for neural networks, which is a significant contribution.  
-- **Technical Soundness:** The methods are well-defined, tested on standard datasets (CIFAR-10 and ImageNet), and results are validated.  
-- **Clarity:** The abstract and conclusion are clear and concise, explaining the problem and proposed solution effectively.  
-- **Relevance:** The topic is highly relevant to the AI field, particularly for deep learning researchers.  
-**Label:** Publishable  
+Example 1
 
-**Example 2:**  
-**Title:** "Survey of Neural Networks"  
-**Abstract:** This paper provides a general overview of neural network techniques without introducing new insights or experimental results.  
-**Methodology:** No specific methods were tested or evaluated.  
-**Conclusion:** General survey papers without experiments are less impactful.  
-**Analysis:**  
-- **Originality:** The paper does not contribute new ideas or methods; it is a general overview.  
-- **Technical Soundness:** No experiments or validation are provided.  
-- **Clarity:** While the writing may be clear, the lack of technical contribution makes it insufficient.  
-- **Relevance:** Neural networks are relevant to AI, but this paper doesn't offer new insights.  
-**Label:** Not Publishable  
+Title: Analyzing Real-Time Group Coordination in Augmented Dance Performances: An LSTM-Based Gesture Modeling Approach
+Abstract (Excerpt):
 
-[Add more examples as needed for few-shot performance...]
+    The paper explores the intersection of augmented reality (AR) and flamenco dance to enhance group cohesion through gesture forecasting with LSTM networks. It proposes an innovative "virtual flamenco guru" to provide real-time feedback, improving synchronization and creativity among dancers. The research also examines cultural implications, therapeutic applications, and the use of AR and LSTM to push the boundaries of art, technology, and collective behavior.
+Decision: Not Publishable
+Reasoning (Step-by-Step):
 
+    Originality: While integrating AR and LSTM in flamenco dance is interesting, the paper includes tangential ideas (e.g., tea leaf predictions) that lack scientific foundation.
+    Technical Soundness: Insufficient experimental detail; novelty of “temporally-compressed gesture forecasting” is unsubstantiated.
+    Clarity: Speculative elements (chaos theory, quantum flamenco) obscure the main contribution.
+    Relevance: Potentially interesting for AR and AI in performing arts, but the paper is too unfocused and lacks rigorous backing.
+
+Example 2
+
+Title: AI-Driven Personalization in Online Education Platforms
+Abstract (Excerpt):
+
+    This research investigates AI-driven personalization in online education by analyzing learning behaviors and integrating a unique AI-generated dreamscape for immersive learning. The authors claim this approach improves engagement and learning outcomes through tailored pathways and unconventional techniques like "philosophical resonance."
+Decision: Not Publishable
+Reasoning (Step-by-Step):
+
+    Originality: AI-generated dreamscapes and “philosophical resonance” are creative but ungrounded.
+    Technical Soundness: Reliance on unscientific “daydreaming modules” and speculative data.
+    Clarity: Overly abstract explanations and lack of reproducible experiments.
+    Relevance: While online education is important, the approach is too whimsical for practical or academic impact.
+
+Example 3
+
+Title: Detailed Action Identification in Baseball Game Recordings
+Abstract (Excerpt):
+
+    This paper introduces MLB-YouTube, a dataset for nuanced activity recognition in baseball videos. It evaluates methods for both segmented and continuous video analysis, incorporating temporal feature aggregation and focusing on fine-grained activities like pitch speed and type prediction. The study highlights the significance of temporal structures in improving recognition accuracy and proposes advanced models for multi-label classification and regression tasks.
+
+Decision: Publishable
+Reasoning (Step-by-Step):
+
+    Originality: Domain-specific baseball dataset (MLB-YouTube) is novel; pitch speed prediction is unique.
+    Technical Soundness: Rigorous experiments with advanced temporal modeling approaches.
+    Clarity: Detailed methodology, results, and metrics.
+    Relevance: Highly relevant to computer vision and sports analytics.
+
+Example 4
+
+Title: Addressing Min-Max Challenges in Nonconvex-Nonconcave Problems with Solutions Exhibiting Weak Minty Properties
+Abstract (Excerpt):
+
+    This research addresses structured nonconvex-nonconcave min-max problems with weak Minty solutions, introducing a modified OGDA+ algorithm with convergence guarantees. It establishes improved convergence rates, compares OGDA+ with existing methods, and introduces an adaptive-step-size EG+ variant to handle weak Minty solutions without prior parameter knowledge.
+Decision: Publishable
+Reasoning (Step-by-Step):
+
+    Originality: Novel exploration of weak Minty solutions in min-max optimization.
+    Technical Soundness: Well-defined algorithms (OGDA+, EG+), theoretical proofs, and strong empirical results.
+    Clarity: Clear organization, definitions, and numerical experiments.
+    Relevance: Significant contribution to optimization, GANs, and adversarial frameworks.
+
+Example 5
+
+Title: Detecting Medication Usage in Parkinson’s Disease Through Multi-modal Indoor Positioning: A Pilot Study in a Naturalistic Environment
+Abstract (Excerpt):
+   This study explores a transformer-based approach using RSSI and accelerometer data to enhance indoor localization for detecting motor fluctuations in Parkinson's disease (PD) patients. It introduces the MDCSA model to predict medication adherence via in-home gait speed features. Evaluations in smart homes validate its efficacy in differentiating "ON" and "OFF" medication states.
+    
+Decision: Publishable
+Reasoning (Step-by-Step):
+
+    Originality: Multi-modal indoor positioning for medication adherence in PD is novel.
+    Technical Soundness: Transformer-based RSSI and accelerometer data approach validated on real-world datasets.
+    Clarity: Well-written with clear methodology and quantitative findings.
+    Relevance: Addresses critical healthcare challenge, highly relevant to AI in medicine.
+
+Example 6
+
+Title: Safe Predictors for Input-Output Specification Enforcement
+Abstract (Excerpt):
+   The paper proposes a method for designing neural networks that adhere to input-output specifications by combining constrained predictors with convex combinations. Applications include synthetic datasets and an aircraft collision avoidance problem, demonstrating safety guarantees without sacrificing accuracy. 
+Decision: Publishable
+Reasoning (Step-by-Step):
+
+    Originality: Introduces correct-by-construction safe predictors for neural networks.
+    Technical Soundness: Solid theoretical foundation with proofs and real-world collision avoidance examples.
+    Clarity: Thorough explanations, illustrative examples, and proofs.
+    Relevance: Highly relevant to AI safety and autonomous systems.
+
+Example 7
+
+Title: Improving Temporal Analysis for Predictive Systems in Dynamic Environments
+Abstract (Excerpt):
+   This research presents a novel predictive framework designed for dynamic environments, integrating temporal embeddings with self-attention mechanisms. The method enhances predictive accuracy in tasks such as traffic forecasting and resource allocation. Extensive testing on real-world datasets demonstrates its superior performance compared to baseline methods. 
+Decision: Publishable
+Reasoning (Step-by-Step):
+
+    Originality: Innovative integration of temporal embeddings with self-attention.
+    Technical Soundness: Detailed algorithms and validation on real-world datasets.
+    Clarity: Well-structured text, visual aids, and thorough experimental results.
+    Relevance: Significant for traffic forecasting, resource allocation, and other dynamic AI applications.
 ---
-#### **Classify the Following Paper:**  
-**Title:** "Improving GPT Models with Fine-Tuning Techniques"  
-**Abstract:** This paper explores the fine-tuning of GPT models on domain-specific datasets.  
-**Methodology:** Experimental results show improved performance in text generation tasks using a new loss function.  
-**Conclusion:** The new fine-tuning approach outperforms existing baselines by 12%.
+
+Now classify the given research paper based on given structured extraction{context} from the actual research paper based on the reasoning steps in the examples. 
 """
 
 
