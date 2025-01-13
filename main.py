@@ -10,7 +10,7 @@ class APIRequest(BaseModel):
     pdf_path: str
 
 
-@app.post("/api/task2"):
+@app.post("/api/task2")
 def recommender(body: APIRequest):
     logger.info(f"TASK 2 | {body.pdf_path}")
     
