@@ -36,7 +36,7 @@ def clean_text(context: str):
 
 def research_paper_extraction(
     pdf_path: str
-) -> str:
+) -> ResearchPaperExtraction:
     pdf_read = PdfReader(pdf_path)
     context = ""
 
@@ -44,12 +44,6 @@ def research_paper_extraction(
         context += x.extract_text()
 
     print(context)
-
-    # cleaned_context = clean_text(
-    #     context=context
-    # )
-
-    # print(cleaned_context)
 
     completion = client.beta.chat.completions.parse(
         model="gpt-4o-mini",
@@ -65,8 +59,9 @@ def research_paper_extraction(
     return research_paper
 
 
-obj_ = research_paper_extraction(
-    "/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/CVPR/R007.pdf"
-)
+# Example Usage
+# obj_ = research_paper_extraction(
+#     "/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/CVPR/R007.pdf"
+# )
 
-print(obj_.impact)
+# print(obj_.impact)
