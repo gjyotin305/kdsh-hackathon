@@ -1,6 +1,8 @@
 import openai
 import asyncio
+from openai import OpenAI
 
+client = openai.OpenAI()
 
 ###############################################################################
 # 1. system prompts for each reviewer
@@ -205,7 +207,7 @@ async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
       - A short textual review
       - A final label: Publishable or Not Publishable
     """
-    response = await openai.ChatCompletion.acreate(
+    response = await client.chat.completions.acreate(
         model="gpt-4", 
         messages=[
             {"role": "system", "content": system_prompt},
@@ -233,7 +235,7 @@ Your task:
 - Provide a short explanation of your reasoning (2-3 sentences).
 - Provide a confidence measure on a scale of 1 to 10 (where 1 = very uncertain, 10 = extremely confident).
 
-You may consider the reviewers' feedback, but use your own judgment as well.
+You should consider the reviewers' feedback as well as use your own judgment as well.
 Format your response in a clear and structured manner, for example:
 
 Final Decision: <Publishable or Not Publishable>
@@ -276,7 +278,7 @@ Clarity: {avg_scores['Clarity']:.2f}
 Relevance: {avg_scores['Relevance']:.2f}
 """
 
-    response = await openai.ChatCompletion.acreate(
+    response = await client.chat.completions.acreate(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": aggregator_prompt},
