@@ -2,7 +2,7 @@ import openai
 import asyncio
 from openai import OpenAI
 
-client = openai.OpenAI()
+client = openai.AsyncOpenAI()
 
 ###############################################################################
 # 1. system prompts for each reviewer
