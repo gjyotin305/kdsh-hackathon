@@ -13,4 +13,4 @@ RUN uv venv /app/kdhs_env
 
 ENV PATH="/app/kdhs_env/bin:$PATH"
 
-RUN uv pip install  pypdf openai pypdf asyncio
+RUN uv pip install  pypdf openai pypdf asyncio uvicorn fastapi
