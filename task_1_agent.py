@@ -1,11 +1,32 @@
-import openai
+import os
+import glob
 import asyncio
+import csv
+import re
+import openai
 from openai import OpenAI
+from extraction import research_paper_extraction
+# import tqdm
+from tqdm.asyncio import tqdm
 
+
+# score_pattern = re.compile(r'(\d+(?:\.\d+)?)')
+
+# ## helper function to extract scores from a string
+# def extract_numeric_score(line: str) -> float:
+#     match = score_pattern.search(line)
+#     if match:
+#         return float(match.group(1))
+#     else:
+#         return 0.0
+
+###############################################################################
+# Initialize your OpenAI async client once, globally.
+###############################################################################
 client = openai.AsyncOpenAI()
 
 ###############################################################################
-# 1. system prompts for each reviewer
+# 1. System prompts for each reviewer
 ###############################################################################
 reviewer_prompts = [
     """
@@ -63,7 +84,8 @@ reviewer_prompts = [
     Technical Soundness: X
     Clarity: X
     Relevance: X
-
+    Don't provide anything except numeric scores in the above format.
+    
     Then provide:
     - A short textual review (2-3 sentences).
     - A final label: either "Publishable" or "Not Publishable".
@@ -73,14 +95,9 @@ reviewer_prompts = [
 ]
 
 ###############################################################################
-# context
+# 2. Core user prompt (template). We'll fill the {extracted_text} for each PDF.
 ###############################################################################
-context= ""
-
-###############################################################################
-    # 2. User prompt: Define the task and provide an example for the reviewers
-###############################################################################
-user_prompt = """
+USER_PROMPT_TEMPLATE = """
 You are an expert reviewer for AI research papers. Your task is to classify 
 whether a paper is "Publishable" or "Not Publishable" based on these criteria:  
 1. **Originality**: Does the paper contribute new ideas or methods?  
@@ -191,12 +208,12 @@ Reasoning (Step-by-Step):
     Relevance: Significant for traffic forecasting, resource allocation, and other dynamic AI applications.
 ---
 
-Now classify the given research paper based on given structured extraction{context} from the actual research paper based on the reasoning steps in the examples. 
+Now classify the given research paper based on given structured extraction{extracted_text} from the actual research paper based on the reasoning steps in the examples. Output format should be followed strictly, examples above are only for reasoning steps.
+
 """
 
-
 ###############################################################################
-# 3. Parallel function to get reviewer feedback asynchronously
+# 3. Asynchronous call to get reviewer feedback
 ###############################################################################
 async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
     """
@@ -208,12 +225,11 @@ async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
       - A final label: Publishable or Not Publishable
     """
     response = await client.chat.completions.create(
-        model="gpt-4o-mini", 
+        model="gpt-4o-mini",  
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
         ],
-        
         temperature=0.7
     )
     return response.choices[0].message.content
@@ -226,7 +242,6 @@ aggregator_system_prompt = """
 You are the final aggregator. You will receive:
 1. The original paper details (Title, Abstract, Methodology, Conclusion).
 2. Three reviewer feedbacks, including numeric scores for (Originality, Technical Soundness, Clarity, Relevance) each out of 10, plus a short textual review and label.
-3. The average of each criterion (Originality, Technical Soundness, Clarity, Relevance) computed across the three reviewers.
 
 Your task:
 - Read the paper details carefully.
@@ -235,33 +250,31 @@ Your task:
 - Provide a short explanation of your reasoning (2-3 sentences).
 - Provide a confidence measure on a scale of 1 to 10 (where 1 = very uncertain, 10 = extremely confident).
 
-You should consider the reviewers' feedback as well as use your own judgment as well.
-Format your response in a clear and structured manner, for example:
-
+You should consider the reviewers' feedback as well as use your own judgment.
+Format your response in a clear, structured and strict manner, for example:
+"
 Final Decision: <Publishable or Not Publishable>
 Reasoning: <2-3 sentences summarizing the key points>
 Confidence: <number from 1 to 10>
+"
+Another important fact is that you should strictly adhere to this template. Specially for the 'Final Decision' part, you are allowed to use only the words 'Publishable' or 'Not Publishable'. No other variations (like “Potentially Publishable”, “Might be Publishable”, "publishable under no circumstances", etc.) should be used.
 """
 
-
 ###############################################################################
-# 5. Aggregator function: call the LLM to combine reviewer feedback & final verdict
+# 5. Aggregator function: combine reviewer feedback & final verdict
 ###############################################################################
 async def get_aggregated_decision(
     aggregator_prompt: str,
     paper_details: str,
-    reviewer_feedbacks: list,
-    avg_scores: dict
+    reviewer_feedbacks: list
 ):
     """
     Makes a call to the OpenAI ChatCompletion endpoint for the final aggregator.
     The aggregator has access to:
       - paper_details
       - all reviewer feedback
-      - average scores
     Returns a structured final decision.
     """
-    
     aggregator_user_content = f"""
 Paper Details:
 {paper_details}
@@ -270,12 +283,6 @@ Reviewer Feedbacks:
 1) {reviewer_feedbacks[0]}
 2) {reviewer_feedbacks[1]}
 3) {reviewer_feedbacks[2]}
-
-Average Scores:
-Originality: {avg_scores['Originality']:.2f}
-Technical Soundness: {avg_scores['Technical Soundness']:.2f}
-Clarity: {avg_scores['Clarity']:.2f}
-Relevance: {avg_scores['Relevance']:.2f}
 """
 
     response = await client.chat.completions.create(
@@ -290,63 +297,59 @@ Relevance: {avg_scores['Relevance']:.2f}
 
 
 ###############################################################################
-# 6. Main function: orchestrate the entire workflow
+# 6. Process a single paper: extract text, get reviewer feedback, and aggregate
 ###############################################################################
-async def main():
+async def process_paper(pdf_path: str, paper_id: str):
+    paper_extracted_text = research_paper_extraction(pdf_path)
+    user_prompt = USER_PROMPT_TEMPLATE.format(extracted_text=paper_extracted_text)
     
-    review_tasks = [
-        get_reviewer_feedback(sp, user_prompt) for sp in reviewer_prompts
-    ]
+    # Get feedback from each reviewer
+    review_tasks = [get_reviewer_feedback(sp, user_prompt) for sp in reviewer_prompts]
     reviewer_responses = await asyncio.gather(*review_tasks)
 
-    scores_list = []
-    for resp in reviewer_responses:
-        lines = resp.splitlines()
-        score_dict = {"Originality": 0, "Technical Soundness": 0, "Clarity": 0, "Relevance": 0}
-
-        for line in lines:
-            line_lower = line.lower()
-            if "originality:" in line_lower:
-                score_dict["Originality"] = float(line.split(":")[-1].strip())
-            elif "technical soundness:" in line_lower:
-                score_dict["Technical Soundness"] = float(line.split(":")[-1].strip())
-            elif "clarity:" in line_lower:
-                score_dict["Clarity"] = float(line.split(":")[-1].strip())
-            elif "relevance:" in line_lower:
-                score_dict["Relevance"] = float(line.split(":")[-1].strip())
-
-        scores_list.append(score_dict)
-
-    
-    avg_scores = {
-        "Originality": sum(d["Originality"] for d in scores_list) / len(scores_list),
-        "Technical Soundness": sum(d["Technical Soundness"] for d in scores_list) / len(scores_list),
-        "Clarity": sum(d["Clarity"] for d in scores_list) / len(scores_list),
-        "Relevance": sum(d["Relevance"] for d in scores_list) / len(scores_list),
-    }
-
+    # Aggregated decision
     final_decision = await get_aggregated_decision(
         aggregator_prompt=aggregator_system_prompt,
-        paper_details=user_prompt,
-        reviewer_feedbacks=reviewer_responses,
-        avg_scores=avg_scores
+        paper_details=paper_extracted_text,
+        reviewer_feedbacks=reviewer_responses
     )
+    
+    if "final decision: publishable" in final_decision.lower():
+        publishable = 1
+    elif "final decision: not publishable" in final_decision.lower():
+        publishable = 0
+    else:
+        raise ValueError("Unable to determine publishability from final decision.")
 
-   
-    # print("----------- REVIEWER RESPONSES -----------")
-    # for i, resp in enumerate(reviewer_responses):
-    #     print(f"Reviewer {i+1} Response:\n{resp}\n")
-
-    # print("----------- AVERAGE SCORES -----------")
-    # for criterion, value in avg_scores.items():
-    #     print(f"{criterion}: {value:.2f}")
-
-    print("\n----------- FINAL AGGREGATED DECISION -----------")
-    print(final_decision)
+    return publishable, final_decision
 
 
 ###############################################################################
-# 7. Run main
+# 7. Main: Loop over all PDFs in "Papers" folder and run the pipeline
 ###############################################################################
+async def main():
+    papers_folder = "Papers_new"
+    pdf_files = glob.glob(os.path.join(papers_folder, "*.pdf"))
+
+    # CSV writer
+    csv_filename = "paper_publishability.csv"
+    with open(csv_filename, "w", newline="", encoding="utf-8") as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(["Paper ID", "Publishable"]) 
+        # for pdf_path in pdf_files:
+        for pdf_path in tqdm(pdf_files, desc="Processing papers", unit="paper"):
+            paper_id = os.path.splitext(os.path.basename(pdf_path))[0]
+            # print(f"Processing {paper_id}...")
+            try:
+                publishable_label, decision_text = await process_paper(pdf_path, paper_id)
+                csv_writer.writerow([paper_id, publishable_label])
+                
+                # print(decision_text)
+            except Exception as e:
+                print(f"Error processing {paper_id}: {e}")
+
+    print(f"\nCSV generated: {csv_filename}")
+
+
 if __name__ == "__main__":
     asyncio.run(main())
