@@ -44,7 +44,7 @@ def research_paper_extraction(
     for x in pdf_read.pages:
         context += x.extract_text()
 
-    print(context)
+    #print(context)
 
     completion = client.beta.chat.completions.parse(
         model=f"{MODEL_NAME}",
