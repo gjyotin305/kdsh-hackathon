@@ -39,7 +39,7 @@ def classifier(body: APIRequest):
     curl --location 'http://localhost:8080/api/task1' \
     --header 'Content-Type: application/json' \
     --data '{
-        "pdf_path": "yes"
+        "pdf_path": "<pdf_path>"
     }'
     """
     logger.info(f"TASK 1 | {body.pdf_path}")
