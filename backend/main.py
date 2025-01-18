@@ -41,6 +41,9 @@ def classifier(body: APIRequest):
     }'
     """
     logger.info(f"TASK 1 | {body.pdf_path}")
+
+    
+
     return {
         "message": "SAMPLE"
     }
