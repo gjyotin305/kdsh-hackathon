@@ -1,6 +1,8 @@
 import uvicorn
 from loguru import logger
 from agent import router_conference
+from combined_task import process_paper
+from task_1 import task_1_process
 from pydantic import BaseModel
 from fastapi import FastAPI
 
@@ -42,10 +44,14 @@ def classifier(body: APIRequest):
     """
     logger.info(f"TASK 1 | {body.pdf_path}")
 
-    
+    status, conference_title, rationale = task_1_process(
+        pdf_path=body.pdf_path
+    )
 
     return {
-        "message": "SAMPLE"
+        "publishable_status": f"{status}",
+        "conference_title": f"{conference_title}",
+        "rationale": f"{rationale}"
     }
 
 

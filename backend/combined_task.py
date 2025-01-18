@@ -26,7 +26,7 @@ from constants import (
 ###############################################################################
 # Initialize your OpenAI async client once, globally.
 ###############################################################################
-client = openai.AsyncOpenAI()
+client = openai.OpenAI()
 
 ###############################################################################
 # 1. System prompts for each reviewer
@@ -218,7 +218,7 @@ Now classify the given research paper based on given structured extraction{extra
 ###############################################################################
 # 3. Asynchronous call to get reviewer feedback
 ###############################################################################
-async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
+def get_reviewer_feedback(system_prompt: str, user_prompt: str):
     """
     Makes an asynchronous call to the OpenAI ChatCompletion endpoint
     for a single reviewer's feedback.
@@ -227,7 +227,7 @@ async def get_reviewer_feedback(system_prompt: str, user_prompt: str):
       - A short textual review
       - A final label: Publishable or Not Publishable
     """
-    response = await client.chat.completions.create(
+    response = client.chat.completions.create(
         model="gpt-4o-mini",  
         messages=[
             {"role": "system", "content": system_prompt},
@@ -266,7 +266,7 @@ Another important fact is that you should strictly adhere to this template. Spec
 ###############################################################################
 # 5. Aggregator function: combine reviewer feedback & final verdict
 ###############################################################################
-async def get_aggregated_decision(
+def get_aggregated_decision(
     aggregator_prompt: str,
     paper_details: str,
     reviewer_feedbacks: list
@@ -288,7 +288,7 @@ Reviewer Feedbacks:
 3) {reviewer_feedbacks[2]}
 """
 
-    response = await client.chat.completions.create(
+    response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": aggregator_prompt},

@@ -35,6 +35,17 @@ def clean_text(context: str):
     return response.choices[0].message.content
 
 
+def extract_text(
+    pdf_path: str
+):
+    pdf_read = PdfReader(pdf_path)
+    context = ""
+
+    for x in pdf_read.pages:
+        context += x.extract_text()
+    
+    return context
+
 def research_paper_extraction(
     pdf_path: str
 ) -> ResearchPaperExtraction:
