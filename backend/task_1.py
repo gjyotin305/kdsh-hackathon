@@ -25,7 +25,7 @@ def task_1_process(pdf_path: str):
     
     if publishable == 1:
         try:
-            conference_info = router_conference(pdf_path, final_decision)
+            conference_info = router_conference(pdf_path)
             conference_title = conference_info.conference_title
             rationale = conference_info.rationale
         except Exception as e:

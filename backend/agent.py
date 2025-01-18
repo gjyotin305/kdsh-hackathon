@@ -38,9 +38,9 @@ def router_conference(
     event = completion.choices[0].message.parsed
     return event
 
-if __name__ == "__main__":
-    conf_title = router_conference(
-        pdf_path="/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/TMLR/R014.pdf"
-    )
-    print(conf_title.conference_title)
-    print(conf_title.rationale)
+# if __name__ == "__main__":
+#     conf_title = router_conference(
+#         pdf_path="/home/gjyotin305/Desktop/kdsh-hackathon/data/data/Publishable/TMLR/R014.pdf"
+#     )
+#     print(conf_title.conference_title)
+#     print(conf_title.rationale)
